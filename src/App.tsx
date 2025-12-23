@@ -1,4 +1,4 @@
-import { GitHubBanner, Refine } from "@refinedev/core";
+import { Refine } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
@@ -27,11 +27,15 @@ import {
   CategoryList,
   CategoryShow,
 } from "./pages/categories";
+import { authProvider } from "./providers/auth-provider";
+import { Login } from "./pages/login";
+import { Register } from "./pages/register";
+import { ForgotPassword } from "./pages/forgot-password";
+
 
 function App() {
   return (
     <BrowserRouter>
-      <GitHubBanner />
       <RefineKbarProvider>
         <ThemeProvider>
           <DevtoolsProvider>
@@ -39,6 +43,7 @@ function App() {
               dataProvider={dataProvider("https://api.fake-rest.refine.dev")}
               notificationProvider={useNotificationProvider()}
               routerProvider={routerProvider}
+              authProvider={authProvider}
               resources={[
                 {
                   name: "blog_posts",
@@ -68,6 +73,12 @@ function App() {
               }}
             >
               <Routes>
+                {/* Authentication Routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+
+                {/* Protected Routes */}
                 <Route
                   element={
                     <Layout>
