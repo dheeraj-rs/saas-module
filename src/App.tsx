@@ -30,7 +30,7 @@ function App() {
   return (
     <BrowserRouter>
       <RefineKbarProvider>
-        <ThemeProvider>
+        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
           <ThemeCustomizationProvider>
             <DevtoolsProvider>
               <Refine
