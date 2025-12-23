@@ -32,7 +32,7 @@ interface ThemeCustomizationContextType extends ThemeCustomization {
 const defaultCustomization: ThemeCustomization = {
     colorScheme: "blue-white",
     fontSize: "medium",
-    fontFamily: "inter",
+    fontFamily: "sans-serif",
     borderRadius: 8,
 };
 
