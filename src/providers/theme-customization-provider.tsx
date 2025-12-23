@@ -9,7 +9,7 @@ export type ColorScheme = "blue-white" | "red-white" | "black-white";
 export type FontSize = "tiny" | "small" | "medium" | "large" | "extra-large";
 
 // Font Family - Professional fonts only
-export type FontFamily = "inter" | "sans-serif" | "roboto" | "poppins";
+export type FontFamily = "inter" | "sans-serif" | "roboto" | "poppins" | "open-sans" | "lato";
 
 // Border Radius
 export type BorderRadius = number; // 0-20px
@@ -80,6 +80,8 @@ const FONT_FAMILIES = {
     "sans-serif": "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     roboto: "'Roboto', -apple-system, BlinkMacSystemFont, sans-serif",
     poppins: "'Poppins', -apple-system, BlinkMacSystemFont, sans-serif",
+    "open-sans": "'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif",
+    lato: "'Lato', -apple-system, BlinkMacSystemFont, sans-serif",
 };
 
 export function ThemeCustomizationProvider({ children }: { children: React.ReactNode }) {
