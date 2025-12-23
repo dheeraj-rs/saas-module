@@ -4,16 +4,18 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import {
   useActiveAuthProvider,
+  useGetIdentity,
   useLogout,
   useRefineOptions,
 } from "@refinedev/core";
-import { LogOutIcon } from "lucide-react";
+import { LogOutIcon, SettingsIcon } from "lucide-react";
 
 export const Header = () => {
   const { isMobile } = useSidebar();
@@ -70,7 +72,7 @@ function MobileHeader() {
       )}
     >
       <SidebarTrigger
-        className={cn("text-muted-foreground", "rotate-180", "ml-1", {
+        className={cn("text-muted-foreground", "rotate-180", "ml-1", "cursor-pointer", {
           "opacity-0": open,
           "opacity-100": !open || isMobile,
           "pointer-events-auto": !open || isMobile,
@@ -112,13 +114,18 @@ function MobileHeader() {
         </h2>
       </div>
 
-      <ThemeToggle className={cn("h-8", "w-8")} />
+      <ThemeToggle className={cn("h-8", "w-8", "cursor-pointer")} />
     </header>
   );
 }
 
 const UserDropdown = () => {
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
+  const { data: user } = useGetIdentity<{
+    name?: string;
+    email?: string;
+    avatar?: string;
+  }>();
 
   const authProvider = useActiveAuthProvider();
 
@@ -128,17 +135,46 @@ const UserDropdown = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger className="cursor-pointer">
         <UserAvatar />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="w-64">
+        {/* User Info Section with Avatar */}
+        {user && (
+          <>
+            <div className="flex items-center gap-3 px-2 py-2">
+              <img
+                src={user.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'}
+                alt={user.name || 'User'}
+                className="h-10 w-10 rounded-full"
+              />
+              <div className="flex flex-col overflow-hidden">
+                <p className="text-sm font-medium truncate">{user.name || 'User'}</p>
+                <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+              </div>
+            </div>
+            <DropdownMenuSeparator />
+          </>
+        )}
+
+        {/* Settings Option */}
+        <DropdownMenuItem asChild>
+          <a href="/settings" className="cursor-pointer">
+            <SettingsIcon className="mr-2 h-4 w-4" />
+            <span>Settings</span>
+          </a>
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        {/* Logout Option */}
         <DropdownMenuItem
           onClick={() => {
             logout();
           }}
         >
           <LogOutIcon
-            className={cn("text-destructive", "hover:text-destructive")}
+            className={cn("mr-2 h-4 w-4", "text-destructive", "hover:text-destructive")}
           />
           <span className={cn("text-destructive", "hover:text-destructive")}>
             {isLoggingOut ? "Logging out..." : "Logout"}

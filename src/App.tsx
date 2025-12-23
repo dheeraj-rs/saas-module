@@ -15,22 +15,15 @@ import { Layout } from "./components/refine-ui/layout/layout";
 import { Toaster } from "./components/refine-ui/notification/toaster";
 import { useNotificationProvider } from "./components/refine-ui/notification/use-notification-provider";
 import { ThemeProvider } from "./components/refine-ui/theme/theme-provider";
-import {
-  BlogPostCreate,
-  BlogPostEdit,
-  BlogPostList,
-  BlogPostShow,
-} from "./pages/blog-posts";
-import {
-  CategoryCreate,
-  CategoryEdit,
-  CategoryList,
-  CategoryShow,
-} from "./pages/categories";
+import { ThemeCustomizationProvider } from "./providers/theme-customization-provider";
 import { authProvider } from "./providers/auth-provider";
 import { Login } from "./pages/login";
 import { Register } from "./pages/register";
 import { ForgotPassword } from "./pages/forgot-password";
+import { Settings } from "./pages/settings";
+import AllEvents from "./pages/events";
+import AllOrganizations from "./pages/organizations";
+import { SettingsIcon, CalendarDays, Building2 } from "lucide-react";
 
 
 function App() {
@@ -38,81 +31,88 @@ function App() {
     <BrowserRouter>
       <RefineKbarProvider>
         <ThemeProvider>
-          <DevtoolsProvider>
-            <Refine
-              dataProvider={dataProvider("https://api.fake-rest.refine.dev")}
-              notificationProvider={useNotificationProvider()}
-              routerProvider={routerProvider}
-              authProvider={authProvider}
-              resources={[
-                {
-                  name: "blog_posts",
-                  list: "/blog-posts",
-                  create: "/blog-posts/create",
-                  edit: "/blog-posts/edit/:id",
-                  show: "/blog-posts/show/:id",
-                  meta: {
-                    canDelete: true,
+          <ThemeCustomizationProvider>
+            <DevtoolsProvider>
+              <Refine
+                dataProvider={dataProvider("https://api.fake-rest.refine.dev")}
+                notificationProvider={useNotificationProvider()}
+                routerProvider={routerProvider}
+                authProvider={authProvider}
+                resources={[
+                  {
+                    name: "events",
+                    list: "/events",
+                    meta: {
+                      label: "All Events",
+                      icon: <CalendarDays />,
+                    },
                   },
-                },
-                {
-                  name: "categories",
-                  list: "/categories",
-                  create: "/categories/create",
-                  edit: "/categories/edit/:id",
-                  show: "/categories/show/:id",
-                  meta: {
-                    canDelete: true,
+                  {
+                    name: "organizations",
+                    list: "/organizations",
+                    meta: {
+                      label: "All Organizations",
+                      icon: <Building2 />,
+                    },
                   },
-                },
-              ]}
-              options={{
-                syncWithLocation: true,
-                warnWhenUnsavedChanges: true,
-                projectId: "SkXXGj-Hyflnx-WeWCX7",
-              }}
-            >
-              <Routes>
-                {/* Authentication Routes */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
+                  {
+                    name: "settings",
+                    list: "/settings",
+                    meta: {
+                      label: "Settings",
+                      icon: <SettingsIcon />,
+                    },
+                  },
+                ]}
+                options={{
+                  syncWithLocation: true,
+                  warnWhenUnsavedChanges: true,
+                  projectId: "SkXXGj-Hyflnx-WeWCX7",
+                  title: {
+                    text: "Saas Module",
+                    icon: <img src="/logo/cp-logo.png" alt="CP Logo" style={{ height: '40px', width: 'auto', objectFit: 'contain' }} />,
+                  },
+                }}
+              >
+                <Routes>
+                  {/* Authentication Routes */}
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
 
-                {/* Protected Routes */}
-                <Route
-                  element={
-                    <Layout>
-                      <Outlet />
-                    </Layout>
-                  }
-                >
+                  {/* Protected Routes */}
                   <Route
-                    index
-                    element={<NavigateToResource resource="blog_posts" />}
-                  />
-                  <Route path="/blog-posts">
-                    <Route index element={<BlogPostList />} />
-                    <Route path="create" element={<BlogPostCreate />} />
-                    <Route path="edit/:id" element={<BlogPostEdit />} />
-                    <Route path="show/:id" element={<BlogPostShow />} />
+                    element={
+                      <Layout>
+                        <Outlet />
+                      </Layout>
+                    }
+                  >
+                    <Route
+                      index
+                      element={<NavigateToResource resource="events" />}
+                    />
+                    <Route path="/events">
+                      <Route index element={<AllEvents />} />
+                    </Route>
+                    <Route path="/organizations">
+                      <Route index element={<AllOrganizations />} />
+                    </Route>
+                    <Route path="/settings">
+                      <Route index element={<Settings />} />
+                    </Route>
+                    <Route path="*" element={<ErrorComponent />} />
                   </Route>
-                  <Route path="/categories">
-                    <Route index element={<CategoryList />} />
-                    <Route path="create" element={<CategoryCreate />} />
-                    <Route path="edit/:id" element={<CategoryEdit />} />
-                    <Route path="show/:id" element={<CategoryShow />} />
-                  </Route>
-                  <Route path="*" element={<ErrorComponent />} />
-                </Route>
-              </Routes>
+                </Routes>
 
-              <Toaster />
-              <RefineKbar />
-              <UnsavedChangesNotifier />
-              <DocumentTitleHandler />
-            </Refine>
-            <DevtoolsPanel />
-          </DevtoolsProvider>
+                <Toaster />
+                <RefineKbar />
+                <UnsavedChangesNotifier />
+                <DocumentTitleHandler />
+              </Refine>
+              <DevtoolsPanel />
+            </DevtoolsProvider>
+          </ThemeCustomizationProvider>
         </ThemeProvider>
       </RefineKbarProvider>
     </BrowserRouter>

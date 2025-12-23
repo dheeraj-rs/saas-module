@@ -243,7 +243,9 @@ function SidebarHeader() {
           }
         )}
       >
-        <div>{title.icon}</div>
+        {/* Logo - always visible */}
+        <div className="shrink-0">{title.icon}</div>
+        {/* Text - only visible when expanded */}
         <h2
           className={cn(
             "text-sm",
@@ -261,7 +263,7 @@ function SidebarHeader() {
       </div>
 
       <ShadcnSidebarTrigger
-        className={cn("text-muted-foreground", "mr-1.5", {
+        className={cn("text-muted-foreground", "mr-1.5", "cursor-pointer", {
           "opacity-0": !open,
           "opacity-100": open || isMobile,
           "pointer-events-auto": open || isMobile,
@@ -312,6 +314,7 @@ function SidebarButton({
   ...props
 }: SidebarButtonProps) {
   const Link = useLink();
+  const { open } = useShadcnSidebar();
 
   const buttonContent = (
     <>
@@ -326,6 +329,8 @@ function SidebarButton({
           "font-semibold": isSelected,
           "text-sidebar-primary-foreground": isSelected,
           "text-foreground": !isSelected,
+          "opacity-0": !open,
+          "hidden": !open,
         })}
       >
         {getDisplayName(item)}
@@ -340,12 +345,14 @@ function SidebarButton({
       variant="ghost"
       size="lg"
       className={cn(
-        "flex w-full items-center justify-start gap-2 py-2 !px-3 text-sm",
+        "flex w-full items-center gap-2 py-2 text-sm",
         {
           "bg-sidebar-primary": isSelected,
           "hover:!bg-sidebar-primary/90": isSelected,
           "text-sidebar-primary-foreground": isSelected,
           "hover:text-sidebar-primary-foreground": isSelected,
+          "justify-center !px-2": !open,
+          "justify-start !px-3": open,
         },
         className
       )}

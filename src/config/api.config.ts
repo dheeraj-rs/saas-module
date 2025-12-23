@@ -58,12 +58,13 @@ export interface AuthResponse {
 }
 
 export interface User {
-  id: number;
-  name: string;
+  user_id: string; // UUID format
+  organization_ids: string[]; // Array of organization UUIDs
+  event_ids: string[]; // Array of event UUIDs
   email: string;
-  email_verified_at: string | null;
+  name?: string; // Optional name field
+  exp: number; // Token expiration timestamp
+  iat: number; // Token issued at timestamp
   avatar?: string;
   role?: string;
-  created_at: string;
-  updated_at: string;
 }

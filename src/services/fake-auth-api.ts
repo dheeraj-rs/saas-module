@@ -24,34 +24,42 @@ const STORAGE_KEYS = {
   CURRENT_USER: 'fake_api_current_user',
 } as const;
 
-// Default test users
+// Default test users matching Laravel backend structure
 const DEFAULT_USERS: User[] = [
   {
-    id: 1,
-    name: 'Test User',
-    email: 'test@example.com',
-    email_verified_at: new Date().toISOString(),
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=test',
-    role: 'user',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    user_id: '018f2000-a111-b222-c333-000000000001',
+    organization_ids: ['018f012c-6b3c-7455-a9e8-9a12e7c8c101'],
+    event_ids: [],
+    email: 'john.williams@organizer.com',
+    name: 'John Williams',
+    exp: Math.floor(Date.now() / 1000) + 7200, // 2 hours from now
+    iat: Math.floor(Date.now() / 1000),
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=john',
+    role: 'organizer',
   },
   {
-    id: 2,
-    name: 'Admin User',
-    email: 'admin@example.com',
-    email_verified_at: new Date().toISOString(),
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin',
-    role: 'admin',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    user_id: '018f2000-a111-b222-c333-000000000002',
+    organization_ids: [
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c101',
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c102',
+    ],
+    event_ids: [
+      '018f012c-6b3c-7403-a9e8-9a12e7c8c101',
+      '018f0452c-6b3c-7455-a9e8-9a12e7c8c101',
+    ],
+    email: 'sarah.johnson@organizer.com',
+    name: 'Sarah Johnson',
+    exp: Math.floor(Date.now() / 1000) + 7200, // 2 hours from now
+    iat: Math.floor(Date.now() / 1000),
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sarah',
+    role: 'organizer',
   },
 ];
 
 // Password storage (in real app, this would be hashed on backend)
 const USER_PASSWORDS = new Map<string, string>([
-  ['test@example.com', 'password123'],
-  ['admin@example.com', 'admin123'],
+  ['john.williams@organizer.com', 'password123'],
+  ['sarah.johnson@organizer.com', 'password123'],
 ]);
 
 /**
@@ -126,19 +134,36 @@ function saveUsers(users: User[]): void {
 }
 
 /**
- * Generate a fake JWT token
+ * Generate a fake JWT token matching Laravel backend structure
  */
-function generateToken(userId: number): string {
+function generateToken(user: User): string {
+  const now = Math.floor(Date.now() / 1000);
   const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
   const payload = btoa(
     JSON.stringify({
-      sub: userId,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 3600 * 24, // 24 hours
+      user_id: user.user_id,
+      organization_ids: user.organization_ids,
+      event_ids: user.event_ids,
+      email: user.email,
+      exp: now + 7200, // 2 hours
+      iat: now,
     })
   );
-  const signature = btoa(`fake_signature_${userId}_${Date.now()}`);
+  const signature = btoa(`fake_signature_${user.user_id}_${Date.now()}`);
   return `${header}.${payload}.${signature}`;
+}
+
+/**
+ * Generate UUID v7 (time-based)
+ */
+function generateUUID(): string {
+  const timestamp = Date.now();
+  const hex = timestamp.toString(16).padStart(12, '0');
+  const random = Math.random().toString(16).substring(2, 14);
+  return `018f${hex.substring(0, 4)}-${hex.substring(4, 8)}-7${hex.substring(
+    8,
+    11
+  )}-${random.substring(0, 4)}-${random.substring(4, 16)}`;
 }
 
 /**
@@ -190,19 +215,28 @@ export const fakeAuthApi = {
       };
     }
 
-    // Generate token
-    const token = generateToken(user.id);
+    // Generate token with updated user timestamps
+    const updatedUser: User = {
+      ...user,
+      exp: Math.floor(Date.now() / 1000) + 7200, // 2 hours from now
+      iat: Math.floor(Date.now() / 1000),
+    };
+
+    const token = generateToken(updatedUser);
     localStorage.setItem(TOKEN_CONFIG.ACCESS_TOKEN_KEY, token);
-    localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+    localStorage.setItem(
+      STORAGE_KEYS.CURRENT_USER,
+      JSON.stringify(updatedUser)
+    );
 
     return {
       success: true,
       message: 'Login successful.',
       data: {
-        user,
+        user: updatedUser,
         token,
         token_type: TOKEN_CONFIG.TOKEN_TYPE,
-        expires_in: 86400, // 24 hours in seconds
+        expires_in: 7200, // 2 hours in seconds
       },
     };
   },
@@ -269,16 +303,18 @@ export const fakeAuthApi = {
       };
     }
 
-    // Create new user
+    // Create new user with UUID and Laravel structure
+    const now = Math.floor(Date.now() / 1000);
     const newUser: User = {
-      id: users.length + 1,
-      name,
+      user_id: generateUUID(),
+      organization_ids: [], // New users start with no organizations
+      event_ids: [], // New users start with no events
       email,
-      email_verified_at: null, // Email not verified initially
+      name,
+      exp: now + 7200, // 2 hours from now
+      iat: now,
       avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
       role: 'user',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
     };
 
     users.push(newUser);
@@ -286,7 +322,7 @@ export const fakeAuthApi = {
     USER_PASSWORDS.set(email, password);
 
     // Generate token and auto-login
-    const token = generateToken(newUser.id);
+    const token = generateToken(newUser);
     localStorage.setItem(TOKEN_CONFIG.ACCESS_TOKEN_KEY, token);
     localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(newUser));
 
@@ -297,7 +333,7 @@ export const fakeAuthApi = {
         user: newUser,
         token,
         token_type: TOKEN_CONFIG.TOKEN_TYPE,
-        expires_in: 86400,
+        expires_in: 7200, // 2 hours in seconds
       },
     };
   },
@@ -340,7 +376,7 @@ export const fakeAuthApi = {
     // In real app, this would send an email
     console.log(`[FAKE API] Password reset link sent to: ${email}`);
     console.log(
-      `[FAKE API] Reset token: fake_reset_token_${user.id}_${Date.now()}`
+      `[FAKE API] Reset token: fake_reset_token_${user.user_id}_${Date.now()}`
     );
 
     return {
@@ -413,38 +449,50 @@ export const fakeAuthApi = {
     await delay();
 
     // Simulate OAuth flow
-    const email = `${provider}user@example.com`;
+    const email = `${provider}user@organizer.com`;
     const users = getUsers();
     let user = users.find((u) => u.email === email);
 
     if (!user) {
       // Create new user from OAuth
+      const now = Math.floor(Date.now() / 1000);
       user = {
-        id: users.length + 1,
+        user_id: generateUUID(),
+        organization_ids: [],
+        event_ids: [],
         name: `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`,
         email,
-        email_verified_at: new Date().toISOString(), // OAuth emails are pre-verified
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
+        exp: now + 7200,
+        iat: now,
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${provider}`,
         role: 'user',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
       };
       users.push(user);
       saveUsers(users);
     }
 
-    const token = generateToken(user.id);
+    // Update timestamps
+    const updatedUser: User = {
+      ...user,
+      exp: Math.floor(Date.now() / 1000) + 7200,
+      iat: Math.floor(Date.now() / 1000),
+    };
+
+    const token = generateToken(updatedUser);
     localStorage.setItem(TOKEN_CONFIG.ACCESS_TOKEN_KEY, token);
-    localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+    localStorage.setItem(
+      STORAGE_KEYS.CURRENT_USER,
+      JSON.stringify(updatedUser)
+    );
 
     return {
       success: true,
       message: `${provider} login successful.`,
       data: {
-        user,
+        user: updatedUser,
         token,
         token_type: TOKEN_CONFIG.TOKEN_TYPE,
-        expires_in: 86400,
+        expires_in: 7200,
       },
     };
   },
