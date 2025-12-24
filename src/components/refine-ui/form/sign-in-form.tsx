@@ -10,14 +10,11 @@ import {
   Card,
   CardContent,
   CardDescription,
-  // CardFooter,
-  CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { useLink, useLogin, useRefineOptions } from '@refinedev/core';
 
@@ -25,6 +22,8 @@ export const SignInForm = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   const Link = useLink();
 
@@ -32,8 +31,62 @@ export const SignInForm = () => {
 
   const { mutate: login } = useLogin();
 
+  const validateEmail = (value: string) => {
+    if (!value) {
+      setEmailError('Email is required');
+      return false;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+      setEmailError('Please enter a valid email address');
+      return false;
+    }
+    setEmailError('');
+    return true;
+  };
+
+  const validatePassword = (value: string) => {
+    if (!value) {
+      setPasswordError('Password is required');
+      return false;
+    }
+    if (value.length < 6) {
+      setPasswordError('Password must be at least 6 characters');
+      return false;
+    }
+    setPasswordError('');
+    return true;
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    if (value) {
+      validateEmail(value);
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPassword(value);
+    if (value) {
+      validatePassword(value);
+    } else {
+      setPasswordError('');
+    }
+  };
+
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+
+    if (!isEmailValid || !isPasswordValid) {
+      return;
+    }
 
     login({
       email,
@@ -57,78 +110,127 @@ export const SignInForm = () => {
     <div
       className={cn(
         'flex',
-        'flex-col',
         'items-center',
         'justify-center',
-        'px-6',
+        'min-h-svh',
+        'px-4',
         'py-8',
-        'min-h-svh'
+        'bg-background'
       )}
     >
-      <div className={cn('flex', 'items-center', 'justify-center')}>
-        {title.icon && (
-          <div
-            className={cn('text-foreground', '[&>svg]:w-12', '[&>svg]:h-12')}
-          >
-            {title.icon}
+      <Card className={cn('w-full', 'max-w-[500px]', 'shadow-lg', 'border')}>
+        <CardContent className={cn('p-10', 'sm:p-12')}>
+          {/* Logo */}
+          {title.icon && (
+            <div className={cn('flex', 'justify-center', 'mb-6')}>
+              <div
+                className={cn(
+                  'text-primary',
+                  '[&>svg]:w-16',
+                  '[&>svg]:h-16',
+                  '[&>svg]:sm:w-20',
+                  '[&>svg]:sm:h-20'
+                )}
+              >
+                {title.icon}
+              </div>
+            </div>
+          )}
+
+          {/* Header */}
+          <div className={cn('text-center', 'mb-8')}>
+            <CardTitle
+              className={cn(
+                'text-3xl',
+                'sm:text-4xl',
+                'font-bold',
+                'text-blue-600',
+                'dark:text-blue-400',
+                'mb-2'
+              )}
+            >
+              Sign in
+            </CardTitle>
+            <CardDescription
+              className={cn(
+                'text-base',
+                'text-foreground',
+                'dark:text-foreground/90',
+                'font-normal'
+              )}
+            >
+              Welcome back
+            </CardDescription>
           </div>
-        )}
-      </div>
 
-      <Card className={cn('sm:w-[456px]', 'p-12', 'mt-6')}>
-        <CardHeader className={cn('px-0')}>
-          <CardTitle
-            className={cn(
-              'text-blue-600',
-              'dark:text-blue-400',
-              'text-3xl',
-              'font-semibold'
-            )}
-          >
-            Sign in
-          </CardTitle>
-          <CardDescription
-            className={cn('text-muted-foreground', 'font-medium')}
-          >
-            Welcome back
-          </CardDescription>
-        </CardHeader>
-
-        <Separator />
-
-        <CardContent className={cn('px-0')}>
-          <form onSubmit={handleSignIn}>
-            <div className={cn('flex', 'flex-col', 'gap-2')}>
-              <Label htmlFor="email">Email</Label>
+          {/* Form */}
+          <form onSubmit={handleSignIn} className={cn('space-y-5')}>
+            {/* Email Field */}
+            <div className={cn('space-y-2')}>
+              <Label
+                htmlFor="email"
+                className={cn('text-sm', 'font-medium', 'text-foreground')}
+              >
+                Email
+              </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder=""
+                placeholder="Enter your email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleEmailChange}
+                className={cn(
+                  'h-11',
+                  'text-base',
+                  'placeholder:text-muted-foreground/60',
+                  emailError
+                    ? 'border-destructive focus-visible:border-destructive focus-visible:ring-destructive focus-visible:ring-2'
+                    : ''
+                )}
               />
-            </div>
-            <div
-              className={cn('relative', 'flex', 'flex-col', 'gap-2', 'mt-6')}
-            >
-              <Label htmlFor="password">Password</Label>
-              <InputPassword
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              {emailError && (
+                <p className={cn('text-xs', 'text-destructive', 'mt-1.5')}>
+                  {emailError}
+                </p>
+              )}
             </div>
 
-            <div
-              className={cn(
-                'flex items-center justify-between',
-                'flex-wrap',
-                'gap-2',
-                'mt-4'
+            {/* Password Field */}
+            <div className={cn('space-y-2')}>
+              <Label
+                htmlFor="password"
+                className={cn('text-sm', 'font-medium', 'text-foreground')}
+              >
+                Password
+              </Label>
+              <InputPassword
+                id="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={handlePasswordChange}
+                required
+                className={cn(
+                  'h-11',
+                  'text-base',
+                  'placeholder:text-muted-foreground/60',
+                  passwordError
+                    ? 'border-destructive focus-visible:border-destructive focus-visible:ring-destructive focus-visible:ring-2'
+                    : ''
+                )}
+              />
+              {passwordError && (
+                <p className={cn('text-xs', 'text-destructive', 'mt-1.5')}>
+                  {passwordError}
+                </p>
               )}
+            </div>
+
+            {/* Remember Me & Forgot Password */}
+            <div
+              className={cn('flex', 'items-center', 'justify-between', 'pt-1')}
             >
-              <div className={cn('flex items-center', 'space-x-2')}>
+              <div className={cn('flex', 'items-center', 'space-x-2')}>
                 <Checkbox
                   id="remember"
                   checked={rememberMe}
@@ -136,18 +238,25 @@ export const SignInForm = () => {
                     setRememberMe(checked === 'indeterminate' ? false : checked)
                   }
                 />
-                <Label htmlFor="remember">Remember me</Label>
+                <Label
+                  htmlFor="remember"
+                  className={cn('text-sm', 'font-normal', 'cursor-pointer')}
+                >
+                  Remember me
+                </Label>
               </div>
               <Link
                 to="/forgot-password"
                 className={cn(
                   'text-sm',
+                  'font-medium',
                   'flex',
                   'items-center',
-                  'gap-2',
-                  'text-primary hover:underline',
+                  'gap-1.5',
                   'text-blue-600',
-                  'dark:text-blue-400'
+                  'dark:text-blue-400',
+                  'hover:underline',
+                  'transition-colors'
                 )}
               >
                 <span>Forgot password</span>
@@ -155,7 +264,23 @@ export const SignInForm = () => {
               </Link>
             </div>
 
-            <Button type="submit" size="lg" className={cn('w-full', 'mt-6')}>
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              size="lg"
+              className={cn(
+                'w-full',
+                'h-12',
+                'mt-6',
+                'text-base',
+                'font-semibold',
+                'bg-blue-600',
+                'hover:bg-blue-700',
+                'dark:bg-blue-600',
+                'dark:hover:bg-blue-700',
+                'transition-colors'
+              )}
+            >
               Sign in
             </Button>
             {/* 
