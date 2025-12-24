@@ -30,10 +30,14 @@ const STORAGE_KEYS = {
 } as const;
 
 // Default test users matching Laravel backend structure
+// IMPORTANT: Each user has COMPLETELY DIFFERENT organizations for proper data isolation
 const DEFAULT_USERS: User[] = [
   {
     user_id: '018f2000-a111-b222-c333-000000000001',
-    organization_ids: ['018f012c-6b3c-7455-a9e8-9a12e7c8c101'],
+    organization_ids: [
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c101', // Medical Conference Association
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c103', // Tech Summit Group
+    ],
     event_ids: [],
     email: 'john.williams@organizer.com',
     name: 'John Williams',
@@ -45,8 +49,8 @@ const DEFAULT_USERS: User[] = [
   {
     user_id: '018f2000-a111-b222-c333-000000000002',
     organization_ids: [
-      '018f012c-6b3c-7455-a9e8-9a12e7c8c101',
-      '018f012c-6b3c-7455-a9e8-9a12e7c8c102',
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c102', // Healthcare Events Ltd
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c104', // Global Education Forum
     ],
     event_ids: [
       '018f012c-6b3c-7403-a9e8-9a12e7c8c101',

@@ -50,6 +50,8 @@ import type {
   EventStatus,
   ViewMode,
 } from './types';
+import { useUser } from '@/contexts/UserContext';
+import { filterEventsByUser } from '@/lib/data-filter.utils';
 
 const statusConfig = {
   active: {
@@ -109,9 +111,26 @@ export default function AllEvents() {
     fill_percentage: true,
   });
 
+  const { user } = useUser();
+
+  // Filter organizations based on user access
+  const userOrganizations = useMemo(() => {
+    if (!user || !user.organization_ids || user.organization_ids.length === 0) {
+      return [];
+    }
+    return fakeOrganizations.filter((org) =>
+      user.organization_ids.includes(org.id)
+    );
+  }, [user]);
+
+  // Filter events based on user access first
+  const userEvents = useMemo(() => {
+    return filterEventsByUser(fakeEvents, user);
+  }, [user]);
+
   // Filter events based on current filters and active tab
   const filteredEvents = useMemo(() => {
-    let result = [...fakeEvents];
+    let result = [...userEvents];
 
     // Apply tab filter
     if (activeTab !== 'all' && activeTab !== 'recent') {
@@ -143,7 +162,7 @@ export default function AllEvents() {
     }
 
     return result;
-  }, [activeTab, filters, searchValue]);
+  }, [userEvents, activeTab, filters, searchValue]);
 
   // Pagination
   const paginatedEvents = useMemo(() => {
@@ -409,7 +428,7 @@ export default function AllEvents() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">-</SelectItem>
-              {fakeOrganizations.map((org) => (
+              {userOrganizations.map((org) => (
                 <SelectItem key={org.id} value={org.id}>
                   {org.name}
                 </SelectItem>
@@ -679,7 +698,7 @@ export default function AllEvents() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">-</SelectItem>
-                        {fakeOrganizations.map((org) => (
+                        {userOrganizations.map((org) => (
                           <SelectItem key={org.id} value={org.id}>
                             {org.name}
                           </SelectItem>

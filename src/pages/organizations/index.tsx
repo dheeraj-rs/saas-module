@@ -34,6 +34,8 @@ import { useMemo, useState } from 'react';
 import { OrganizationCard } from './components/organization-card';
 import { fakeOrganizations } from './fake-organizations-data';
 import type { Organization, ViewMode } from './types';
+import { useUser } from '@/contexts/UserContext';
+import { filterOrganizationsByUser } from '@/lib/data-filter.utils';
 
 const columnHelper = createColumnHelper<Organization>();
 
@@ -41,10 +43,16 @@ export default function AllOrganizations() {
   const [viewMode, setViewMode] = useState<ViewMode>('table');
   const [searchValue, setSearchValue] = useState('');
   const [sorting, setSorting] = useState<SortingState>([]);
+  const { user } = useUser();
 
-  // Filter organizations
+  // Filter organizations based on user access
+  const userOrganizations = useMemo(() => {
+    return filterOrganizationsByUser(fakeOrganizations, user);
+  }, [user]);
+
+  // Filter organizations by search
   const filteredOrgs = useMemo(() => {
-    let result = [...fakeOrganizations];
+    let result = [...userOrganizations];
 
     if (searchValue.trim()) {
       const searchLower = searchValue.toLowerCase();
@@ -54,7 +62,7 @@ export default function AllOrganizations() {
     }
 
     return result;
-  }, [searchValue]);
+  }, [userOrganizations, searchValue]);
 
   // Table Columns
   const columns = useMemo(
