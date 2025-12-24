@@ -14,6 +14,11 @@
 
 import type { ApiResponse, AuthResponse, User } from '@/config/api.config';
 import { TOKEN_CONFIG } from '@/config/api.config';
+import {
+  getAuthToken,
+  setAuthToken,
+  clearAuthCookies,
+} from '@/lib/cookie.utils';
 
 // Simulated network delay (in ms)
 const NETWORK_DELAY = 800;
@@ -223,7 +228,7 @@ export const fakeAuthApi = {
     };
 
     const token = generateToken(updatedUser);
-    localStorage.setItem(TOKEN_CONFIG.ACCESS_TOKEN_KEY, token);
+    setAuthToken(token);
     localStorage.setItem(
       STORAGE_KEYS.CURRENT_USER,
       JSON.stringify(updatedUser)
@@ -323,7 +328,7 @@ export const fakeAuthApi = {
 
     // Generate token and auto-login
     const token = generateToken(newUser);
-    localStorage.setItem(TOKEN_CONFIG.ACCESS_TOKEN_KEY, token);
+    setAuthToken(token);
     localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(newUser));
 
     return {
@@ -391,8 +396,7 @@ export const fakeAuthApi = {
   async logout(): Promise<ApiResponse> {
     await delay(300); // Shorter delay for logout
 
-    localStorage.removeItem(TOKEN_CONFIG.ACCESS_TOKEN_KEY);
-    localStorage.removeItem(TOKEN_CONFIG.REFRESH_TOKEN_KEY);
+    clearAuthCookies();
     localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
 
     return {
@@ -407,7 +411,7 @@ export const fakeAuthApi = {
   async me(): Promise<ApiResponse<User>> {
     await delay(300);
 
-    const token = localStorage.getItem(TOKEN_CONFIG.ACCESS_TOKEN_KEY);
+    const token = getAuthToken();
     if (!token) {
       return {
         success: false,
@@ -436,7 +440,7 @@ export const fakeAuthApi = {
    * Check if user is authenticated
    */
   async check(): Promise<boolean> {
-    const token = localStorage.getItem(TOKEN_CONFIG.ACCESS_TOKEN_KEY);
+    const token = getAuthToken();
     return !!token;
   },
 
@@ -479,7 +483,7 @@ export const fakeAuthApi = {
     };
 
     const token = generateToken(updatedUser);
-    localStorage.setItem(TOKEN_CONFIG.ACCESS_TOKEN_KEY, token);
+    setAuthToken(token);
     localStorage.setItem(
       STORAGE_KEYS.CURRENT_USER,
       JSON.stringify(updatedUser)

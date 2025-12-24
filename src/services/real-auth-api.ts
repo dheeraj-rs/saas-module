@@ -11,6 +11,11 @@ import {
   LARAVEL_API_BASE_URL,
   TOKEN_CONFIG,
 } from '@/config/api.config';
+import {
+  getAuthToken,
+  setAuthToken,
+  clearAuthCookies,
+} from '@/lib/cookie.utils';
 
 /**
  * Make authenticated API request
@@ -19,7 +24,7 @@ async function apiRequest<T = unknown>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
-  const token = localStorage.getItem(TOKEN_CONFIG.ACCESS_TOKEN_KEY);
+  const token = getAuthToken();
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -92,7 +97,7 @@ export const realAuthApi = {
     });
 
     if (response.success && response.data) {
-      localStorage.setItem(TOKEN_CONFIG.ACCESS_TOKEN_KEY, response.data.token);
+      setAuthToken(response.data.token);
     }
 
     return response;
@@ -118,7 +123,7 @@ export const realAuthApi = {
     });
 
     if (response.success && response.data) {
-      localStorage.setItem(TOKEN_CONFIG.ACCESS_TOKEN_KEY, response.data.token);
+      setAuthToken(response.data.token);
     }
 
     return response;
@@ -142,8 +147,7 @@ export const realAuthApi = {
       method: 'POST',
     });
 
-    localStorage.removeItem(TOKEN_CONFIG.ACCESS_TOKEN_KEY);
-    localStorage.removeItem(TOKEN_CONFIG.REFRESH_TOKEN_KEY);
+    clearAuthCookies();
 
     return response;
   },
@@ -161,7 +165,7 @@ export const realAuthApi = {
    * Check if user is authenticated
    */
   async check(): Promise<boolean> {
-    const token = localStorage.getItem(TOKEN_CONFIG.ACCESS_TOKEN_KEY);
+    const token = getAuthToken();
     if (!token) return false;
 
     const response = await this.me();
