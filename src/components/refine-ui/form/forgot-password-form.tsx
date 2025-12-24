@@ -1,7 +1,6 @@
 'use client';
 
 import { ArrowLeft } from 'lucide-react';
-import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -14,54 +13,37 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useForgotPassword, useLink, useRefineOptions } from '@refinedev/core';
+import { useFormValidation } from '@/shared/hooks/useFormValidation';
+import {
+  forgotPasswordSchema,
+  type ForgotPasswordFormData,
+} from '@/shared/validation';
 
 export const ForgotPasswordForm = () => {
-  const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState('');
-
   const Link = useLink();
-
   const { title } = useRefineOptions();
-
   const { mutate: forgotPassword } = useForgotPassword();
 
-  const validateEmail = (value: string) => {
-    if (!value) {
-      setEmailError('Email is required');
-      return false;
-    }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(value)) {
-      setEmailError('Please enter a valid email address');
-      return false;
-    }
-    setEmailError('');
-    return true;
-  };
+  // Use React Hook Form + Zod validation
+  const form = useFormValidation({
+    schema: forgotPasswordSchema,
+    defaultValues: {
+      email: '',
+    },
+    mode: 'onSubmit', // Only validate on submit
+    reValidateMode: 'onChange', // After first submit, validate on change
+    onSubmit: async (data: ForgotPasswordFormData) => {
+      forgotPassword({
+        email: data.email,
+      });
+    },
+  });
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setEmail(value);
-    if (value) {
-      validateEmail(value);
-    } else {
-      setEmailError('');
-    }
-  };
-
-  const handleForgotPassword = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const isEmailValid = validateEmail(email);
-
-    if (!isEmailValid) {
-      return;
-    }
-
-    forgotPassword({
-      email,
-    });
-  };
+  const {
+    register,
+    handleSubmitWithValidation,
+    formState: { errors, isSubmitting },
+  } = form;
 
   return (
     <div
@@ -121,7 +103,10 @@ export const ForgotPasswordForm = () => {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleForgotPassword} className={cn('space-y-5')}>
+          <form
+            onSubmit={handleSubmitWithValidation}
+            className={cn('space-y-5')}
+          >
             {/* Email Field */}
             <div className={cn('space-y-2')}>
               <Label
@@ -134,21 +119,19 @@ export const ForgotPasswordForm = () => {
                 id="email"
                 type="email"
                 placeholder="Enter your email"
-                required
-                value={email}
-                onChange={handleEmailChange}
+                {...register('email')}
                 className={cn(
                   'h-11',
                   'text-base',
                   'placeholder:text-muted-foreground/60',
-                  emailError
-                    ? 'border-destructive focus-visible:border-destructive focus-visible:ring-destructive focus-visible:ring-2'
+                  errors.email
+                    ? 'border-destructive focus-visible:border-destructive focus-visible:ring-destructive focus-visible:ring-1'
                     : ''
                 )}
               />
-              {emailError && (
+              {errors.email && (
                 <p className={cn('text-xs', 'text-destructive', 'mt-1.5')}>
-                  {emailError}
+                  {errors.email.message}
                 </p>
               )}
             </div>
@@ -157,6 +140,7 @@ export const ForgotPasswordForm = () => {
             <Button
               type="submit"
               size="lg"
+              disabled={isSubmitting}
               className={cn(
                 'w-full',
                 'h-12',
@@ -170,7 +154,7 @@ export const ForgotPasswordForm = () => {
                 'transition-colors'
               )}
             >
-              Send reset link
+              {isSubmitting ? 'Sending...' : 'Send reset link'}
             </Button>
           </form>
 
