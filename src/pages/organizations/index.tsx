@@ -14,11 +14,16 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import {
   getCoreRowModel,
+  getSortedRowModel,
+  SortingState,
   useReactTable,
   flexRender,
 } from '@tanstack/react-table';
 import { createColumnHelper } from '@tanstack/react-table';
 import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
   Calendar,
   LayoutGrid,
   Search,
@@ -33,8 +38,9 @@ import type { Organization, ViewMode } from './types';
 const columnHelper = createColumnHelper<Organization>();
 
 export default function AllOrganizations() {
-  const [viewMode, setViewMode] = useState<ViewMode>('grid');
+  const [viewMode, setViewMode] = useState<ViewMode>('table');
   const [searchValue, setSearchValue] = useState('');
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   // Filter organizations
   const filteredOrgs = useMemo(() => {
@@ -133,7 +139,12 @@ export default function AllOrganizations() {
   const table = useReactTable({
     data: filteredOrgs,
     columns,
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
 
   const { getHeaderGroups, getRowModel } = table;
@@ -143,7 +154,7 @@ export default function AllOrganizations() {
       <div className="px-4 pt-4 pb-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">
+            <h1 className="text-2xl font-bold tracking-tight">
               All Organizations
             </h1>
             <p className="text-base text-muted-foreground mt-1">
@@ -217,12 +228,34 @@ export default function AllOrganizations() {
                   <TableRow key={headerGroup.id} className="bg-muted/30">
                     {headerGroup.headers.map((header) => (
                       <TableHead key={header.id} className="font-medium">
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
+                        {header.isPlaceholder ? null : (
+                          <div
+                            className={
+                              header.column.getCanSort()
+                                ? 'flex items-center gap-1.5 cursor-pointer select-none group hover:text-foreground transition-colors'
+                                : ''
+                            }
+                            onClick={header.column.getToggleSortingHandler()}
+                          >
+                            <span>
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                            </span>
+                            {header.column.getCanSort() && (
+                              <div className="flex-shrink-0">
+                                {header.column.getIsSorted() === 'asc' ? (
+                                  <ArrowUp className="h-3.5 w-3.5 text-primary" />
+                                ) : header.column.getIsSorted() === 'desc' ? (
+                                  <ArrowDown className="h-3.5 w-3.5 text-primary" />
+                                ) : (
+                                  <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors" />
+                                )}
+                              </div>
                             )}
+                          </div>
+                        )}
                       </TableHead>
                     ))}
                   </TableRow>

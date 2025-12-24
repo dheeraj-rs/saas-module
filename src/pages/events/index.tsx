@@ -506,7 +506,7 @@ export default function AllEvents() {
       <div className="px-4 pt-4 pb-4">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">All Events</h1>
+            <h1 className="text-2xl font-bold tracking-tight">All Events</h1>
             <p className="text-base text-muted-foreground mt-1">
               Browse and manage events across all your organizations
             </p>
