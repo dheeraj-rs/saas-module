@@ -10,7 +10,13 @@ import {
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 import { useRefineOptions } from '@refinedev/core';
-import { ArrowLeft, LayoutDashboard, Users, Settings } from 'lucide-react';
+import {
+  ArrowLeft,
+  LayoutDashboard,
+  Users,
+  Settings,
+  PanelLeft,
+} from 'lucide-react';
 import { useNavigate, useParams, useLocation } from 'react-router';
 
 interface SidebarItem {
@@ -142,7 +148,7 @@ export function EventSidebar() {
 
 function SidebarHeader() {
   const { title } = useRefineOptions();
-  const { open } = useShadcnSidebar();
+  const { open, toggleSidebar } = useShadcnSidebar();
 
   return (
     <ShadcnSidebarHeader
@@ -192,6 +198,21 @@ function SidebarHeader() {
           {title.text}
         </h2>
       </div>
+
+      {/* Toggle Button - only visible when sidebar is open */}
+      {open && (
+        <div className="pr-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:bg-accent"
+            onClick={toggleSidebar}
+          >
+            <PanelLeft className="h-4 w-4" />
+            <span className="sr-only">Toggle Sidebar</span>
+          </Button>
+        </div>
+      )}
     </ShadcnSidebarHeader>
   );
 }

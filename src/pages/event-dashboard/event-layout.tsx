@@ -1,9 +1,9 @@
 'use client';
 
-import { Header } from '@/components/refine-ui/layout/header';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 import type { PropsWithChildren } from 'react';
+import { EventHeader } from './event-header';
 import { EventSidebar } from './event-sidebar';
 
 export function EventLayout({ children }: PropsWithChildren) {
@@ -11,7 +11,7 @@ export function EventLayout({ children }: PropsWithChildren) {
     <SidebarProvider>
       <EventSidebar />
       <SidebarInset>
-        <Header />
+        <EventHeader />
         <main
           className={cn(
             '@container/main',

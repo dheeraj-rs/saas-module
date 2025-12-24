@@ -1,9 +1,9 @@
 'use client';
 
-import { Header } from '@/components/refine-ui/layout/header';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 import type { PropsWithChildren } from 'react';
+import { OrganizationHeader } from './organization-header';
 import { OrganizationSidebar } from './organization-sidebar';
 
 export function OrganizationLayout({ children }: PropsWithChildren) {
@@ -11,7 +11,7 @@ export function OrganizationLayout({ children }: PropsWithChildren) {
     <SidebarProvider>
       <OrganizationSidebar />
       <SidebarInset>
-        <Header />
+        <OrganizationHeader />
         <main
           className={cn(
             '@container/main',
