@@ -134,4 +134,26 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Global cursor pointer for interactive elements */
+  button,
+  [role="button"],
+  select,
+  [role="combobox"],
+  [role="option"],
+  [role="menuitem"],
+  [role="tab"],
+  a,
+  label[for],
+  input[type="checkbox"],
+  input[type="radio"] {
+    cursor: pointer;
+  }
+
+  /* Disabled state should show not-allowed cursor */
+  button:disabled,
+  select:disabled,
+  input:disabled {
+    cursor: not-allowed;
+  }
 }

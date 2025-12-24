@@ -1,52 +1,58 @@
-import { Card, CardHeader } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import type { Organization } from "../types";
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import { Calendar, Users } from 'lucide-react';
+import type { Organization } from '../types';
 
 interface OrganizationCardProps {
-    organization: Organization;
+  organization: Organization;
 }
 
 export function OrganizationCard({ organization }: OrganizationCardProps) {
-    const getInitials = (name: string) => {
-        return name
-            .split(" ")
-            .map((n) => n[0])
-            .slice(0, 2)
-            .join("")
-            .toUpperCase();
-    };
+  return (
+    <Card
+      className={cn(
+        'group cursor-pointer transition-all duration-200',
+        'hover:shadow-md hover:border-primary/50',
+        'relative overflow-hidden flex flex-col h-full bg-card'
+      )}
+    >
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-semibold text-lg leading-tight group-hover:text-primary transition-colors line-clamp-2 flex-1">
+            {organization.name}
+          </h3>
+          <Badge
+            variant={organization.role === 'admin' ? 'default' : 'secondary'}
+            className={cn(
+              'capitalize shrink-0',
+              organization.role === 'admin'
+                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800'
+                : 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border-purple-200 dark:border-purple-800'
+            )}
+          >
+            {organization.role}
+          </Badge>
+        </div>
+      </CardHeader>
 
-    return (
-        <Card className={cn(
-            "group cursor-pointer transition-all duration-200",
-            "hover:shadow-md hover:border-primary/50",
-            "relative overflow-hidden flex flex-col h-full bg-card"
-        )}>
-            <CardHeader className="p-2 flex-row items-center gap-2 space-y-0 relative">
-                <div className="h-8 w-8 rounded-full bg-blue-600/10 text-blue-700 dark:bg-blue-600/20 dark:text-blue-400 flex items-center justify-center text-xs font-semibold shrink-0">
-                    {getInitials(organization.name)}
-                </div>
-                <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-lg leading-tight group-hover:text-primary transition-colors truncate">
-                        {organization.name}
-                    </h3>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
-                        <span className={cn("capitalize px-1.5 py-0 rounded-sm bg-secondary text-secondary-foreground font-medium",
-                            organization.role === 'admin' ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300" : ""
-                        )}>
-                            {organization.role}
-                        </span>
-                        <span>•</span>
-                        <span className="flex items-center gap-1">
-                            {organization.eventsCount} Events
-                        </span>
-                        <span>•</span>
-                        <span className="flex items-center gap-1">
-                            {organization.registrationsCount} Regs
-                        </span>
-                    </div>
-                </div>
-            </CardHeader>
-        </Card>
-    );
+      <CardContent className="pt-0">
+        <div className="flex items-center justify-between gap-4 text-sm text-muted-foreground pt-3 border-t">
+          <div className="flex items-center gap-1.5">
+            <Calendar className="h-4 w-4 shrink-0" />
+            <span className="font-medium">{organization.eventsCount}</span>
+            <span className="text-xs">Events</span>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <Users className="h-4 w-4 shrink-0" />
+            <span className="font-medium">
+              {organization.registrationsCount.toLocaleString()}
+            </span>
+            <span className="text-xs">Regs</span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
 }

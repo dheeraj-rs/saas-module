@@ -23,6 +23,8 @@ export interface EventFilters {
   status?: EventStatus[];
   organization?: string[];
   search?: string;
+  createdFrom?: Date;
+  createdUntil?: Date;
 }
 
 export interface Organization {

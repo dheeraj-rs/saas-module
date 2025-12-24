@@ -72,11 +72,11 @@ const COLOR_SCHEMES = {
 
 // Font size scale multipliers - More options for flexibility
 const FONT_SIZE_SCALES = {
-  tiny: 0.75, // 12px base
-  small: 0.875, // 14px base
-  medium: 1, // 16px base
-  large: 1.125, // 18px base
-  'extra-large': 1.25, // 20px base
+  tiny: 0.9375, // 15px (lighter change from medium)
+  small: 1.0625, // 17px (lighter change from medium)
+  medium: 1.25, // 20px (base/perfect)
+  large: 1.375, // 22px (lighter change from medium)
+  'extra-large': 1.5, // 24px (lighter change from medium)
 };
 
 // Font family mappings - Using proper CSS font stacks
