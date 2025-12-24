@@ -2,6 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { Calendar, Users } from 'lucide-react';
+import { useNavigate } from 'react-router';
 import type { Organization } from '../types';
 
 interface OrganizationCardProps {
@@ -9,6 +10,12 @@ interface OrganizationCardProps {
 }
 
 export function OrganizationCard({ organization }: OrganizationCardProps) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/organization-dashboard/${organization.id}`);
+  };
+
   return (
     <Card
       className={cn(
@@ -16,6 +23,7 @@ export function OrganizationCard({ organization }: OrganizationCardProps) {
         'hover:shadow-md hover:border-primary/50',
         'relative overflow-hidden flex flex-col h-full bg-card'
       )}
+      onClick={handleClick}
     >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">

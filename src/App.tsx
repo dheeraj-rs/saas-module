@@ -25,6 +25,11 @@ import { Settings } from './pages/settings';
 import AllEvents from './pages/events';
 import AllOrganizations from './pages/organizations';
 import { SettingsIcon, CalendarDays, Building2 } from 'lucide-react';
+import { OrganizationLayout } from './pages/organization-dashboard/organization-layout';
+import OrganizationDashboard from './pages/organization-dashboard';
+import ManageEvents from './pages/organization-dashboard/manage-events';
+import Registrations from './pages/organization-dashboard/registrations';
+import OrganizationSettings from './pages/organization-dashboard/settings';
 
 function App() {
   return (
@@ -118,6 +123,24 @@ function App() {
                         <Route index element={<Settings />} />
                       </Route>
                       <Route path="*" element={<ErrorComponent />} />
+                    </Route>
+
+                    {/* Organization Dashboard Routes */}
+                    <Route
+                      path="/organization-dashboard/:orgId"
+                      element={
+                        <OrganizationLayout>
+                          <Outlet />
+                        </OrganizationLayout>
+                      }
+                    >
+                      <Route index element={<OrganizationDashboard />} />
+                      <Route path="manage-events" element={<ManageEvents />} />
+                      <Route path="registrations" element={<Registrations />} />
+                      <Route
+                        path="settings"
+                        element={<OrganizationSettings />}
+                      />
                     </Route>
                   </Routes>
 

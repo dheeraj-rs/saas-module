@@ -31,6 +31,7 @@ import {
   Users,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { OrganizationCard } from './components/organization-card';
 import { fakeOrganizations } from './fake-organizations-data';
 import type { Organization, ViewMode } from './types';
@@ -44,6 +45,7 @@ export default function AllOrganizations() {
   const [searchValue, setSearchValue] = useState('');
   const [sorting, setSorting] = useState<SortingState>([]);
   const { user } = useUser();
+  const navigate = useNavigate();
 
   // Filter organizations based on user access
   const userOrganizations = useMemo(() => {
@@ -293,6 +295,9 @@ export default function AllOrganizations() {
                     <TableRow
                       key={row.id}
                       className="hover:bg-muted/50 cursor-pointer"
+                      onClick={() =>
+                        navigate(`/organization-dashboard/${row.original.id}`)
+                      }
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
