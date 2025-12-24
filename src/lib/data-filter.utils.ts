@@ -7,7 +7,7 @@ import type { Event } from '@/pages/events/types';
  */
 export function filterOrganizationsByUser(
   organizations: Organization[],
-  user: User | null
+  user: User | null | undefined
 ): Organization[] {
   if (!user || !user.organization_ids || user.organization_ids.length === 0) {
     return [];
@@ -26,7 +26,7 @@ export function filterOrganizationsByUser(
  */
 export function filterEventsByUser(
   events: Event[],
-  user: User | null
+  user: User | null | undefined
 ): Event[] {
   if (!user) {
     return [];
@@ -50,14 +50,14 @@ export function filterEventsByUser(
 /**
  * Get organization IDs that the user has access to
  */
-export function getUserOrganizationIds(user: User | null): string[] {
+export function getUserOrganizationIds(user: User | null | undefined): string[] {
   return user?.organization_ids || [];
 }
 
 /**
  * Get event IDs that the user has access to
  */
-export function getUserEventIds(user: User | null): string[] {
+export function getUserEventIds(user: User | null | undefined): string[] {
   return user?.event_ids || [];
 }
 
@@ -65,7 +65,7 @@ export function getUserEventIds(user: User | null): string[] {
  * Check if user has access to a specific organization
  */
 export function hasOrganizationAccess(
-  user: User | null,
+  user: User | null | undefined,
   organizationId: string
 ): boolean {
   return user?.organization_ids?.includes(organizationId) || false;
@@ -75,7 +75,7 @@ export function hasOrganizationAccess(
  * Check if user has access to a specific event
  */
 export function hasEventAccess(
-  user: User | null,
+  user: User | null | undefined,
   eventId: string,
   organizationId?: string
 ): boolean {

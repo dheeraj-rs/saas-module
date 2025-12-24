@@ -35,7 +35,8 @@ import { useNavigate } from 'react-router';
 import { OrganizationCard } from './components/organization-card';
 import { fakeOrganizations } from './fake-organizations-data';
 import type { Organization, ViewMode } from './types';
-import { useUser } from '@/contexts/UserContext';
+import { useGetIdentity } from '@refinedev/core';
+import type { User } from '@/config/api.config';
 import { filterOrganizationsByUser } from '@/lib/data-filter.utils';
 
 const columnHelper = createColumnHelper<Organization>();
@@ -44,7 +45,7 @@ export default function AllOrganizations() {
   const [viewMode, setViewMode] = useState<ViewMode>('table');
   const [searchValue, setSearchValue] = useState('');
   const [sorting, setSorting] = useState<SortingState>([]);
-  const { user } = useUser();
+  const { data: user } = useGetIdentity<User>();
   const navigate = useNavigate();
 
   // Filter organizations based on user access

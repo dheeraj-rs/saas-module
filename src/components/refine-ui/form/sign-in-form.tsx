@@ -34,6 +34,8 @@ export const SignInForm = () => {
     mode: 'onSubmit', // Only validate on submit
     reValidateMode: 'onChange', // After first submit, validate on change
     onSubmit: async (data: LoginFormData) => {
+      // Refine automatically fetches user identity after successful login
+      // via authProvider.getIdentity() and React Query invalidation
       login({
         email: data.email,
         password: data.password,

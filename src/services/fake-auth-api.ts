@@ -64,12 +64,81 @@ const DEFAULT_USERS: User[] = [
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sarah',
     role: 'event_manager', // Event Manager - Can manage events
   },
+  {
+    user_id: '018f2000-a111-b222-c333-000000000003',
+    organization_ids: [
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c105', // Innovation Workshop Series
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c106', // Design Leadership Council
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c107', // Business Excellence Network
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c108', // Finance Professionals Group
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c109', // Arts & Culture Foundation
+    ],
+    event_ids: [],
+    email: 'michael.chen@organizer.com',
+    name: 'Michael Chen',
+    exp: Math.floor(Date.now() / 1000) + 7200, // 2 hours from now
+    iat: Math.floor(Date.now() / 1000),
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=michael',
+    role: 'super_admin', // Super Admin - Access to multiple organizations
+  },
+  {
+    user_id: '018f2000-a111-b222-c333-000000000004',
+    organization_ids: [
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c110', // Sports & Recreation Alliance
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c111', // Community Development Hub
+    ],
+    event_ids: [
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c201', // Specific event access
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c202', // Specific event access
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c203', // Specific event access
+    ],
+    email: 'emily.rodriguez@organizer.com',
+    name: 'Emily Rodriguez',
+    exp: Math.floor(Date.now() / 1000) + 7200, // 2 hours from now
+    iat: Math.floor(Date.now() / 1000),
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=emily',
+    role: 'event_manager', // Event Manager - Limited to specific events
+  },
+  {
+    user_id: '018f2000-a111-b222-c333-000000000005',
+    organization_ids: [
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c112', // Environmental Action Group
+    ],
+    event_ids: [],
+    email: 'david.kim@organizer.com',
+    name: 'David Kim',
+    exp: Math.floor(Date.now() / 1000) + 7200, // 2 hours from now
+    iat: Math.floor(Date.now() / 1000),
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=david',
+    role: 'org_admin', // Single Organization Admin
+  },
+  {
+    user_id: '018f2000-a111-b222-c333-000000000006',
+    organization_ids: [
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c101', // Medical Conference Association (shared with John)
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c105', // Innovation Workshop Series (shared with Michael)
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c113', // Research & Development Institute
+    ],
+    event_ids: [
+      '018f012c-6b3c-7455-a9e8-9a12e7c8c204', // Specific event access
+    ],
+    email: 'lisa.thompson@organizer.com',
+    name: 'Lisa Thompson',
+    exp: Math.floor(Date.now() / 1000) + 7200, // 2 hours from now
+    iat: Math.floor(Date.now() / 1000),
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=lisa',
+    role: 'user', // Multi-role User - Mixed access
+  },
 ];
 
 // Password storage (in real app, this would be hashed on backend)
 const USER_PASSWORDS = new Map<string, string>([
   ['john.williams@organizer.com', 'password123'],
   ['sarah.johnson@organizer.com', 'password123'],
+  ['michael.chen@organizer.com', 'password123'],
+  ['emily.rodriguez@organizer.com', 'password123'],
+  ['david.kim@organizer.com', 'password123'],
+  ['lisa.thompson@organizer.com', 'password123'],
 ]);
 
 /**

@@ -51,7 +51,8 @@ import type {
   EventStatus,
   ViewMode,
 } from './types';
-import { useUser } from '@/contexts/UserContext';
+import { useGetIdentity } from '@refinedev/core';
+import type { User } from '@/config/api.config';
 import { filterEventsByUser } from '@/lib/data-filter.utils';
 
 const statusConfig = {
@@ -112,7 +113,7 @@ export default function AllEvents() {
     fill_percentage: true,
   });
 
-  const { user } = useUser();
+  const { data: user } = useGetIdentity<User>();
   const navigate = useNavigate();
 
   // Filter organizations based on user access
