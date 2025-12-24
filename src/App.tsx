@@ -30,6 +30,10 @@ import OrganizationDashboard from './pages/organization-dashboard';
 import ManageEvents from './pages/organization-dashboard/manage-events';
 import Registrations from './pages/organization-dashboard/registrations';
 import OrganizationSettings from './pages/organization-dashboard/settings';
+import { EventLayout } from './pages/event-dashboard/event-layout';
+import EventDashboard from './pages/event-dashboard';
+import EventRegistrations from './pages/event-dashboard/registrations';
+import EventSettings from './pages/event-dashboard/settings';
 
 function App() {
   return (
@@ -141,6 +145,23 @@ function App() {
                         path="settings"
                         element={<OrganizationSettings />}
                       />
+                    </Route>
+
+                    {/* Event Dashboard Routes */}
+                    <Route
+                      path="/event-dashboard/:eventId"
+                      element={
+                        <EventLayout>
+                          <Outlet />
+                        </EventLayout>
+                      }
+                    >
+                      <Route index element={<EventDashboard />} />
+                      <Route
+                        path="registrations"
+                        element={<EventRegistrations />}
+                      />
+                      <Route path="settings" element={<EventSettings />} />
                     </Route>
                   </Routes>
 

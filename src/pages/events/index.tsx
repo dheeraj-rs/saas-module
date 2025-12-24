@@ -40,6 +40,7 @@ import {
   X,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { EventCard } from './components/event-card';
 import { EventFiltersModal } from './components/event-filters-modal';
 import { ColumnVisibilityToggle } from './components/column-visibility-toggle';
@@ -112,6 +113,7 @@ export default function AllEvents() {
   });
 
   const { user } = useUser();
+  const navigate = useNavigate();
 
   // Filter organizations based on user access
   const userOrganizations = useMemo(() => {
@@ -862,6 +864,9 @@ export default function AllEvents() {
                     <TableRow
                       key={row.id}
                       className="hover:bg-muted/50 cursor-pointer"
+                      onClick={() =>
+                        navigate(`/event-dashboard/${row.original.id}`)
+                      }
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
