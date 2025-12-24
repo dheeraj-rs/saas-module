@@ -22,9 +22,14 @@ import { cn } from '@/lib/utils';
 import {
   createColumnHelper,
   getCoreRowModel,
+  getSortedRowModel,
+  SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
   Calendar,
   ChevronLeft,
   ChevronRight,
@@ -91,6 +96,7 @@ export default function AllEvents() {
   const [searchValue, setSearchValue] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<
     Record<string, boolean>
   >({
@@ -284,7 +290,12 @@ export default function AllEvents() {
   const table = useReactTable({
     data: paginatedEvents,
     columns: visibleColumns,
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
 
   const { getHeaderGroups, getRowModel } = table;
@@ -774,11 +785,36 @@ export default function AllEvents() {
                         key={header.id}
                         className="font-semibold text-sm"
                       >
-                        {header.isPlaceholder
-                          ? null
-                          : typeof header.column.columnDef.header === 'function'
-                          ? header.column.columnDef.header(header.getContext())
-                          : header.column.columnDef.header}
+                        {header.isPlaceholder ? null : (
+                          <div
+                            className={
+                              header.column.getCanSort()
+                                ? 'flex items-center gap-1.5 cursor-pointer select-none group hover:text-foreground transition-colors'
+                                : ''
+                            }
+                            onClick={header.column.getToggleSortingHandler()}
+                          >
+                            <span>
+                              {typeof header.column.columnDef.header ===
+                              'function'
+                                ? header.column.columnDef.header(
+                                    header.getContext()
+                                  )
+                                : header.column.columnDef.header}
+                            </span>
+                            {header.column.getCanSort() && (
+                              <div className="flex-shrink-0">
+                                {header.column.getIsSorted() === 'asc' ? (
+                                  <ArrowUp className="h-3.5 w-3.5 text-primary" />
+                                ) : header.column.getIsSorted() === 'desc' ? (
+                                  <ArrowDown className="h-3.5 w-3.5 text-primary" />
+                                ) : (
+                                  <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors" />
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </TableHead>
                     ))}
                   </TableRow>
