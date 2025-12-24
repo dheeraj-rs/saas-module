@@ -31,6 +31,7 @@ const STORAGE_KEYS = {
 
 // Default test users matching Laravel backend structure
 // IMPORTANT: Each user has COMPLETELY DIFFERENT organizations for proper data isolation
+// NOW WITH RBAC ROLES for testing permissions
 const DEFAULT_USERS: User[] = [
   {
     user_id: '018f2000-a111-b222-c333-000000000001',
@@ -44,7 +45,7 @@ const DEFAULT_USERS: User[] = [
     exp: Math.floor(Date.now() / 1000) + 7200, // 2 hours from now
     iat: Math.floor(Date.now() / 1000),
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=john',
-    role: 'organizer',
+    role: 'org_admin', // Organization Admin - Full access to his orgs
   },
   {
     user_id: '018f2000-a111-b222-c333-000000000002',
@@ -61,7 +62,7 @@ const DEFAULT_USERS: User[] = [
     exp: Math.floor(Date.now() / 1000) + 7200, // 2 hours from now
     iat: Math.floor(Date.now() / 1000),
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sarah',
-    role: 'organizer',
+    role: 'event_manager', // Event Manager - Can manage events
   },
 ];
 
