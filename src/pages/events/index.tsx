@@ -82,8 +82,8 @@ const statusConfig = {
 };
 
 const statusTabs: { value: EventStatus | 'all' | 'recent'; label: string }[] = [
-  { value: 'all', label: 'All' },
   { value: 'recent', label: 'Recent' },
+  { value: 'all', label: 'All' },
   { value: 'active', label: 'Active' },
   { value: 'upcoming', label: 'Upcoming' },
   { value: 'past', label: 'Past' },
@@ -94,7 +94,7 @@ const columnHelper = createColumnHelper<Event>();
 export default function AllEvents() {
   const [viewMode, setViewMode] = useState<ViewMode>('table');
   const [activeTab, setActiveTab] = useState<EventStatus | 'all' | 'recent'>(
-    'all'
+    'recent'
   );
   const [filters, setFilters] = useState<EventFiltersType>({});
   const [searchValue, setSearchValue] = useState('');
@@ -625,7 +625,7 @@ export default function AllEvents() {
                       setCurrentPage(1);
                     }}
                   >
-                    <SelectTrigger className="h-8 w-16">
+                    <SelectTrigger className="h-8 w-20">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -923,7 +923,7 @@ export default function AllEvents() {
                     setCurrentPage(1);
                   }}
                 >
-                  <SelectTrigger className="h-8 w-16">
+                  <SelectTrigger className="h-8 w-20">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

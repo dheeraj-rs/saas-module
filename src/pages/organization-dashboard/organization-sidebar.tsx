@@ -16,7 +16,7 @@ import {
   Calendar,
   Users,
   Settings,
-  PanelLeft,
+  PanelLeftIcon,
 } from 'lucide-react';
 import { useNavigate, useParams, useLocation } from 'react-router';
 
@@ -208,17 +208,17 @@ function SidebarHeader() {
 
       {/* Toggle Button - only visible when sidebar is open */}
       {open && (
-        <div className="pr-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-muted-foreground hover:bg-accent"
-            onClick={toggleSidebar}
-          >
-            <PanelLeft className="h-4 w-4" />
-            <span className="sr-only">Toggle Sidebar</span>
-          </Button>
-        </div>
+        <Button
+          data-sidebar="trigger"
+          data-slot="sidebar-trigger"
+          variant="ghost"
+          size="icon"
+          className="size-7 text-muted-foreground mr-1.5 cursor-pointer"
+          onClick={toggleSidebar}
+        >
+          <PanelLeftIcon />
+          <span className="sr-only">Toggle Sidebar</span>
+        </Button>
       )}
     </ShadcnSidebarHeader>
   );

@@ -13,6 +13,7 @@ export * from './hooks/usePermissions';
 // Components
 export * from './components/PermissionGate';
 export * from './components/ProtectedRoute';
+export * from './components/AuthenticatedRoute';
 
 // Providers
 export * from './providers/accessControlProvider';

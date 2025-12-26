@@ -21,7 +21,7 @@ import { errorLogger } from './shared/services/errorLogger';
 
 // Features
 import { TenantProvider } from './features/tenancy';
-import { accessControlProvider } from './features/auth';
+import { accessControlProvider, AuthenticatedRoute } from './features/auth';
 
 // Components & Providers
 import { ErrorComponent } from './components/refine-ui/layout/error-component';
@@ -35,7 +35,6 @@ import { UserProvider } from './contexts/UserContext';
 
 // Pages
 import { Login } from './pages/login';
-import { Register } from './pages/register';
 import { ForgotPassword } from './pages/forgot-password';
 import { Settings } from './pages/settings';
 import AllEvents from './pages/events';
@@ -125,7 +124,6 @@ function App() {
                         <Routes>
                           {/* Authentication Routes */}
                           <Route path="/login" element={<Login />} />
-                          <Route path="/register" element={<Register />} />
                           <Route
                             path="/forgot-password"
                             element={<ForgotPassword />}
@@ -140,9 +138,11 @@ function App() {
                           {/* Protected Routes */}
                           <Route
                             element={
-                              <Layout>
-                                <Outlet />
-                              </Layout>
+                              <AuthenticatedRoute>
+                                <Layout>
+                                  <Outlet />
+                                </Layout>
+                              </AuthenticatedRoute>
                             }
                           >
                             <Route
@@ -165,9 +165,11 @@ function App() {
                           <Route
                             path="/organization-dashboard/:orgId"
                             element={
-                              <OrganizationLayout>
-                                <Outlet />
-                              </OrganizationLayout>
+                              <AuthenticatedRoute>
+                                <OrganizationLayout>
+                                  <Outlet />
+                                </OrganizationLayout>
+                              </AuthenticatedRoute>
                             }
                           >
                             <Route index element={<OrganizationDashboard />} />
@@ -189,9 +191,11 @@ function App() {
                           <Route
                             path="/event-dashboard/:eventId"
                             element={
-                              <EventLayout>
-                                <Outlet />
-                              </EventLayout>
+                              <AuthenticatedRoute>
+                                <EventLayout>
+                                  <Outlet />
+                                </EventLayout>
+                              </AuthenticatedRoute>
                             }
                           >
                             <Route index element={<EventDashboard />} />
